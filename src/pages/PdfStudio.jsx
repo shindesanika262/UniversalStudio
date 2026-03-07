@@ -7,7 +7,6 @@ import PdfSplit from '../components/tools/PdfSplit';
 import PdfCompress from '../components/tools/PdfCompress';
 import PdfConverter from '../components/tools/PdfConverter';
 import PdfSecurity from '../components/tools/PdfSecurity';
-import PdfOCR from '../components/tools/PdfOCR';
 import PdfEditor from '../components/tools/PdfEditor';
 
 const tools = [
@@ -18,10 +17,8 @@ const tools = [
     { name: 'Compress PDF', icon: Download, desc: 'Reduce file size' },
     { name: 'PDF to Word', icon: FileText, desc: 'Convert PDF to Docx' },
     { name: 'PDF to JPG', icon: Image, desc: 'Convert PDF to Images' },
-    { name: 'Edit PDF', icon: Smartphone, desc: 'View and save PDF' },
-    { name: 'Unlock PDF', icon: Upload, desc: 'Remove password' },
     { name: 'Protect PDF', icon: Cloud, desc: 'Add password encryption' },
-    { name: 'OCR PDF', icon: FileText, desc: 'Extract text from scans' },
+    { name: 'Edit PDF', icon: Smartphone, desc: 'View and save PDF' },
 ];
 
 const PdfStudio = () => {
@@ -36,8 +33,6 @@ const PdfStudio = () => {
         else if (toolName === 'PDF to Word') alert('Use Word to PDF logic inverse (Coming Soon)'); // Simplified for demo
         else if (toolName === 'PDF to JPG') setActiveTool('pdf-to-jpg');
         else if (toolName === 'Protect PDF') setActiveTool('protect-pdf');
-        else if (toolName === 'Unlock PDF') setActiveTool('unlock-pdf');
-        else if (toolName === 'OCR PDF') setActiveTool('ocr-pdf');
         else if (toolName === 'Edit PDF') setActiveTool('edit-pdf');
         else alert('This tool is under development!');
     };
@@ -53,7 +48,7 @@ const PdfStudio = () => {
 
             <div style={{
                 display: 'grid',
-                gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
+                gridTemplateColumns: 'repeat(3, 1fr)',
                 gap: '20px'
             }}>
                 {tools.map((tool, index) => (
@@ -89,8 +84,6 @@ const PdfStudio = () => {
             {activeTool === 'word-to-pdf' && <PdfConverter mode="word-to-pdf" onClose={() => setActiveTool(null)} />}
             {activeTool === 'pdf-to-jpg' && <PdfConverter mode="pdf-to-jpg" onClose={() => setActiveTool(null)} />}
             {activeTool === 'protect-pdf' && <PdfSecurity mode="protect" onClose={() => setActiveTool(null)} />}
-            {activeTool === 'unlock-pdf' && <PdfSecurity mode="unlock" onClose={() => setActiveTool(null)} />}
-            {activeTool === 'ocr-pdf' && <PdfOCR onClose={() => setActiveTool(null)} />}
             {activeTool === 'edit-pdf' && <PdfEditor onClose={() => setActiveTool(null)} />}
         </div>
     );

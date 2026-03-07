@@ -1,45 +1,31 @@
 import React, { useState } from 'react';
 import { PDFDocument } from 'pdf-lib';
-import { Lock, Unlock, Upload, X } from 'lucide-react';
+import { Lock, Upload, X } from 'lucide-react';
 import ProcessFeedback from '../ui/ProcessFeedback';
 
-const PdfSecurity = ({ mode, onClose }) => {
+const PdfSecurity = ({ onClose }) => {
     const [file, setFile] = useState(null);
     const [password, setPassword] = useState('');
+    const [confirmPassword, setConfirmPassword] = useState('');
     const [processing, setProcessing] = useState(false);
     const [resultBlob, setResultBlob] = useState(null);
 
     const handleProcess = async () => {
         if (!file || !password) return;
+        if (password !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
         setProcessing(true);
 
         try {
             const fileBuffer = await file.arrayBuffer();
 
-            let pdfDoc;
-            let resultBytes;
-
-            if (mode === 'protect') {
-                // Load, then encrypt during save
-                pdfDoc = await PDFDocument.load(fileBuffer);
-                // pdf-lib handles encryption in save() options
-                resultBytes = await pdfDoc.save({
-                    userPassword: password,
-                    ownerPassword: password // Owner gets full access
-                });
-            } else {
-                // Unlock (requires password to load if encrypted, but pdf-lib load throws if locked and no pass)
-                // Actually, pdf-lib load needs password as second arg if encrypted
-                try {
-                    pdfDoc = await PDFDocument.load(fileBuffer, { password });
-                } catch (e) {
-                    alert('Incorrect password or unable to unlock');
-                    setProcessing(false);
-                    return;
-                }
-                // Save without encryption
-                resultBytes = await pdfDoc.save();
-            }
+            const pdfDoc = await PDFDocument.load(fileBuffer);
+            const resultBytes = await pdfDoc.save({
+                userPassword: password,
+                ownerPassword: password // Owner gets full access
+            });
 
             setResultBlob(new Blob([resultBytes], { type: 'application/pdf' }));
         } catch (err) {
@@ -61,7 +47,7 @@ const PdfSecurity = ({ mode, onClose }) => {
                 width: '90%', maxWidth: '400px', border: '1px solid var(--glass-border)'
             }}>
                 <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px' }}>
-                    <h2>{mode === 'protect' ? 'Protect PDF' : 'Unlock PDF'}</h2>
+                    <h2>Protect PDF</h2>
                     <X onClick={onClose} style={{ cursor: 'pointer' }} />
                 </div>
 
@@ -70,7 +56,7 @@ const PdfSecurity = ({ mode, onClose }) => {
                         border: '2px dashed #444', borderRadius: '10px', padding: '30px',
                         textAlign: 'center', cursor: 'pointer'
                     }} onClick={() => document.getElementById('sec-upload').click()}>
-                        {mode === 'protect' ? <Lock size={40} /> : <Unlock size={40} />}
+                        <Lock size={40} />
                         <p>Upload PDF</p>
                         <input id="sec-upload" type="file" accept="application/pdf" style={{ display: 'none' }} onChange={(e) => setFile(e.target.files[0])} />
                     </div>
@@ -83,7 +69,17 @@ const PdfSecurity = ({ mode, onClose }) => {
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
                             style={{
-                                width: '100%', padding: '10px', margin: '10px 0',
+                                width: '100%', padding: '10px', margin: '5px 0',
+                                borderRadius: '5px', border: '1px solid #333', background: '#222', color: 'white'
+                            }}
+                        />
+                        <input
+                            type="password"
+                            placeholder="Confirm Password"
+                            value={confirmPassword}
+                            onChange={(e) => setConfirmPassword(e.target.value)}
+                            style={{
+                                width: '100%', padding: '10px', margin: '5px 0',
                                 borderRadius: '5px', border: '1px solid #333', background: '#222', color: 'white'
                             }}
                         />
@@ -96,13 +92,13 @@ const PdfSecurity = ({ mode, onClose }) => {
                                 border: 'none', cursor: 'pointer', marginTop: '10px'
                             }}
                         >
-                            {processing ? 'Processing...' : (mode === 'protect' ? 'Encrypt' : 'Unlock')}
+                            {processing ? 'Processing...' : 'Encrypt'}
                         </button>
 
                         <ProcessFeedback
                             processing={processing}
                             resultReady={!!resultBlob}
-                            defaultFilename={mode === 'protect' ? 'protected' : 'unlocked'}
+                            defaultFilename="protected"
                             onDownload={(name) => {
                                 if (resultBlob) {
                                     const link = document.createElement('a');

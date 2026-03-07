@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { LayoutGrid, FileText, Image, Sparkles } from 'lucide-react';
+import { LayoutGrid, FileText, Image, Sparkles, Mail } from 'lucide-react';
 
 const Navbar = () => {
     return (
@@ -29,6 +29,9 @@ const Navbar = () => {
                 </Link>
                 <Link to="/media-studio" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.9rem' }}>
                     <Image size={18} /> Media Studio
+                </Link>
+                <Link to="/contact" style={{ color: 'inherit', textDecoration: 'none', display: 'flex', gap: '8px', alignItems: 'center', fontSize: '0.9rem', border: '1px solid var(--accent-gold)', padding: '5px 15px', borderRadius: '20px', backgroundColor: 'rgba(255, 215, 0, 0.1)' }}>
+                    <Mail size={18} /> Contact Us
                 </Link>
             </div>
         </nav>

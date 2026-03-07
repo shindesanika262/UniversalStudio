@@ -5,6 +5,7 @@ import Home from './pages/Home';
 import PdfStudio from './pages/PdfStudio';
 import MediaStudio from './pages/MediaStudio';
 import Enhancer from './pages/Enhancer';
+import ContactUs from './pages/ContactUs';
 
 function App() {
     return (
@@ -16,6 +17,7 @@ function App() {
                     <Route path="/pdf-studio" element={<PdfStudio />} />
                     <Route path="/media-studio" element={<MediaStudio />} />
                     <Route path="/enhancer" element={<Enhancer />} />
+                    <Route path="/contact" element={<ContactUs />} />
                 </Routes>
             </div>
         </Router>
