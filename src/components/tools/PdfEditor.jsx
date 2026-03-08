@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import * as pdfjsLib from 'pdfjs-dist';
 // Set worker source to CDN to ensure it loads flawlessly across environments
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
 
 import { jsPDF } from 'jspdf';
 import { Download, X, PenTool, Trash2 } from 'lucide-react';

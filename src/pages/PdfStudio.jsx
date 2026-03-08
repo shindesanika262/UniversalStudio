@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Image, Scissors, Layers, Eye, Smartphone, Download, Upload, Cloud } from 'lucide-react';
+import { FileText, Image, Scissors, Layers, Eye, Smartphone, Download, Upload, Cloud, Table } from 'lucide-react';
 import ImageToPdf from '../components/tools/ImageToPdf';
 import MergePdf from '../components/tools/MergePdf';
 import PdfSplit from '../components/tools/PdfSplit';
 import PdfCompress from '../components/tools/PdfCompress';
 import PdfConverter from '../components/tools/PdfConverter';
 import PdfSecurity from '../components/tools/PdfSecurity';
-import PdfEditor from '../components/tools/PdfEditor';
 
 const tools = [
     { name: 'Word to PDF', icon: FileText, desc: 'Convert Docx to PDF' },
@@ -15,10 +14,10 @@ const tools = [
     { name: 'Merge PDF', icon: Layers, desc: 'Combine multiple PDFs' },
     { name: 'Split PDF', icon: Scissors, desc: 'Extract pages from PDF' },
     { name: 'Compress PDF', icon: Download, desc: 'Reduce file size' },
-    { name: 'PDF to Word', icon: FileText, desc: 'Convert PDF to Docx' },
     { name: 'PDF to JPG', icon: Image, desc: 'Convert PDF to Images' },
     { name: 'Protect PDF', icon: Cloud, desc: 'Add password encryption' },
-    { name: 'Edit PDF', icon: Smartphone, desc: 'View and save PDF' },
+    { name: 'PDF to Excel', icon: Table, desc: 'Convert PDF to Excel' },
+    { name: 'Excel to PDF', icon: Table, desc: 'Convert Excel to PDF' },
 ];
 
 const PdfStudio = () => {
@@ -30,10 +29,10 @@ const PdfStudio = () => {
         else if (toolName === 'Split PDF') setActiveTool('split-pdf');
         else if (toolName === 'Compress PDF') setActiveTool('compress-pdf');
         else if (toolName === 'Word to PDF') setActiveTool('word-to-pdf');
-        else if (toolName === 'PDF to Word') alert('Use Word to PDF logic inverse (Coming Soon)'); // Simplified for demo
         else if (toolName === 'PDF to JPG') setActiveTool('pdf-to-jpg');
         else if (toolName === 'Protect PDF') setActiveTool('protect-pdf');
-        else if (toolName === 'Edit PDF') setActiveTool('edit-pdf');
+        else if (toolName === 'PDF to Excel') setActiveTool('pdf-to-excel');
+        else if (toolName === 'Excel to PDF') setActiveTool('excel-to-pdf');
         else alert('This tool is under development!');
     };
     return (
@@ -83,10 +82,12 @@ const PdfStudio = () => {
             {activeTool === 'compress-pdf' && <PdfCompress onClose={() => setActiveTool(null)} />}
             {activeTool === 'word-to-pdf' && <PdfConverter mode="word-to-pdf" onClose={() => setActiveTool(null)} />}
             {activeTool === 'pdf-to-jpg' && <PdfConverter mode="pdf-to-jpg" onClose={() => setActiveTool(null)} />}
+            {activeTool === 'pdf-to-excel' && <PdfConverter mode="pdf-to-excel" onClose={() => setActiveTool(null)} />}
+            {activeTool === 'excel-to-pdf' && <PdfConverter mode="excel-to-pdf" onClose={() => setActiveTool(null)} />}
             {activeTool === 'protect-pdf' && <PdfSecurity mode="protect" onClose={() => setActiveTool(null)} />}
-            {activeTool === 'edit-pdf' && <PdfEditor onClose={() => setActiveTool(null)} />}
         </div>
     );
 };
 
 export default PdfStudio;
+
