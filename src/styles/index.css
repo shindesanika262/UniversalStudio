@@ -1,0 +1,15 @@
+:root {
+  --bg-primary: #0a0a0a;
+  --text-primary: #ffffff;
+  --accent-gold: #ffd700;
+  --glass-border: rgba(255, 255, 255, 0.1);
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: 'Inter', system-ui, Avenir, Helvetica, Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
