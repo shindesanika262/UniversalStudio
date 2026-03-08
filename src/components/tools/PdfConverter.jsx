@@ -49,24 +49,6 @@ const PdfConverter = ({ mode, onClose }) => {
 
                 await page.render({ canvasContext: context, viewport }).promise;
                 canvas.toBlob(blob => setResultBlob(blob), 'image/jpeg');
-            } else if (mode === 'pdf-to-excel') {
-                const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                let textContent = [];
-
-                for (let i = 1; i <= pdf.numPages; i++) {
-                    const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str || '').join(' ');
-                    textContent.push([pageText]); // Simple row per page for now or structure better
-                }
-
-                const ws = XLSX.utils.aoa_to_sheet(textContent);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "PDF Text");
-                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-                setResultBlob(new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
-
             } else if (mode === 'excel-to-pdf') {
                 const arrayBuffer = await file.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
@@ -113,7 +95,6 @@ const PdfConverter = ({ mode, onClose }) => {
         switch (mode) {
             case 'word-to-pdf': return 'Word to PDF';
             case 'pdf-to-jpg': return 'PDF to JPG';
-            case 'pdf-to-excel': return 'PDF to Excel';
             case 'excel-to-pdf': return 'Excel to PDF';
             default: return 'Converter';
         }
@@ -123,14 +104,13 @@ const PdfConverter = ({ mode, onClose }) => {
         switch (mode) {
             case 'word-to-pdf': return ".docx";
             case 'pdf-to-jpg': return "application/pdf";
-            case 'pdf-to-excel': return "application/pdf";
             case 'excel-to-pdf': return ".xlsx, .xls";
             default: return "*";
         }
     };
 
     const getIcon = () => {
-        if (mode === 'pdf-to-excel' || mode === 'excel-to-pdf') return <Table size={40} />;
+        if (mode === 'excel-to-pdf') return <Table size={40} />;
         if (mode === 'pdf-to-jpg') return <Image size={40} />;
         return <FileText size={40} />;
     };
