@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { FileText, Image, Scissors, Layers, Eye, Smartphone, Download, Upload, Cloud, Table } from 'lucide-react';
 import ImageToPdf from '../components/tools/ImageToPdf';
 import MergePdf from '../components/tools/MergePdf';
 import PdfSplit from '../components/tools/PdfSplit';
 import PdfCompress from '../components/tools/PdfCompress';
 import PdfConverter from '../components/tools/PdfConverter';
 import PdfSecurity from '../components/tools/PdfSecurity';
+import PdfEditor from '../components/tools/PdfEditor';
+import { FileText, Image, Scissors, Layers, Eye, Smartphone, Download, Upload, Cloud, Table, PenTool } from 'lucide-react';
 
 const tools = [
     { name: 'Word to PDF', icon: FileText, desc: 'Convert Docx to PDF' },
@@ -17,6 +18,7 @@ const tools = [
     { name: 'PDF to JPG', icon: Image, desc: 'Convert PDF to Images' },
     { name: 'Protect PDF', icon: Cloud, desc: 'Add password encryption' },
     { name: 'Excel to PDF', icon: Table, desc: 'Convert Excel to PDF' },
+    { name: 'Edit PDF', icon: PenTool, desc: 'Add signatures and drawings' },
 ];
 
 const PdfStudio = () => {
@@ -31,6 +33,7 @@ const PdfStudio = () => {
         else if (toolName === 'PDF to JPG') setActiveTool('pdf-to-jpg');
         else if (toolName === 'Protect PDF') setActiveTool('protect-pdf');
         else if (toolName === 'Excel to PDF') setActiveTool('excel-to-pdf');
+        else if (toolName === 'Edit PDF') setActiveTool('edit-pdf');
         else alert('This tool is under development!');
     };
     return (
@@ -82,6 +85,7 @@ const PdfStudio = () => {
             {activeTool === 'pdf-to-jpg' && <PdfConverter mode="pdf-to-jpg" onClose={() => setActiveTool(null)} />}
             {activeTool === 'excel-to-pdf' && <PdfConverter mode="excel-to-pdf" onClose={() => setActiveTool(null)} />}
             {activeTool === 'protect-pdf' && <PdfSecurity mode="protect" onClose={() => setActiveTool(null)} />}
+            {activeTool === 'edit-pdf' && <PdfEditor onClose={() => setActiveTool(null)} />}
         </div>
     );
 };
