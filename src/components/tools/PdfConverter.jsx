@@ -7,7 +7,7 @@ import autoTable from 'jspdf-autotable';
 import { FileText, Image, Upload, X, Table } from 'lucide-react';
 import ProcessFeedback, { saveFile } from '../ui/ProcessFeedback';
 
-pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.js`;
+pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.mjs`;
 
 const PdfConverter = ({ mode, onClose }) => {
     const [file, setFile] = useState(null);
@@ -49,25 +49,54 @@ const PdfConverter = ({ mode, onClose }) => {
 
                 await page.render({ canvasContext: context, viewport }).promise;
                 canvas.toBlob(blob => setResultBlob(blob), 'image/jpeg');
-            } else if (mode === 'pdf-to-excel') {
+            } else if (mode === 'pdf-to-word') {
                 const arrayBuffer = await file.arrayBuffer();
-                const pdf = await pdfjsLib.getDocument(arrayBuffer).promise;
-                let textContent = [];
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                let fullContent = "";
 
                 for (let i = 1; i <= pdf.numPages; i++) {
                     const page = await pdf.getPage(i);
-                    const content = await page.getTextContent();
-                    const pageText = content.items.map(item => item.str || '').join(' ');
-                    textContent.push([pageText]); // Simple row per page for now or structure better
+                    const textContent = await page.getTextContent();
+                    
+                    // Group items by their vertical position (Y coordinate)
+                    const lines = {};
+                    textContent.items.forEach(item => {
+                        const y = Math.round(item.transform[5]);
+                        if (!lines[y]) lines[y] = [];
+                        lines[y].push(item);
+                    });
+
+                    // Sort lines by Y descending (top to bottom)
+                    const sortedY = Object.keys(lines).sort((a, b) => b - a);
+                    
+                    let pageText = "";
+                    sortedY.forEach(y => {
+                        // Sort items within line by X ascending (left to right)
+                        const lineItems = lines[y].sort((a, b) => a.transform[4] - b.transform[4]);
+                        pageText += lineItems.map(item => item.str).join(' ') + "<br/>";
+                    });
+
+                    fullContent += `<div class="page">` + pageText + `</div><hr/>`;
                 }
 
-                const ws = XLSX.utils.aoa_to_sheet(textContent);
-                const wb = XLSX.utils.book_new();
-                XLSX.utils.book_append_sheet(wb, ws, "PDF Text");
-                const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
-                setResultBlob(new Blob([wbout], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }));
+                const docHeader = `
+                    <html xmlns:o='urn:schemas-microsoft-com:office:office' xmlns:w='urn:schemas-microsoft-com:office:word' xmlns='http://www.w3.org/TR/REC-html40'>
+                    <head>
+                        <meta charset='utf-8'>
+                        <style>
+                            body { font-family: 'Calibri', 'Arial', sans-serif; line-height: 1.5; }
+                            .page { margin-bottom: 20px; }
+                        </style>
+                    </head>
+                    <body>
+                `;
+                const docFooter = "</body></html>";
+                const completeDoc = docHeader + fullContent + docFooter;
 
-            } else if (mode === 'excel-to-pdf') {
+                const blob = new Blob([completeDoc], { type: 'application/msword' });
+                setResultBlob(blob);
+
+            } else if (mode === 'pdf-to-excel') {
                 const arrayBuffer = await file.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer, { type: 'array' });
                 const sheetName = workbook.SheetNames[0];
@@ -113,6 +142,7 @@ const PdfConverter = ({ mode, onClose }) => {
         switch (mode) {
             case 'word-to-pdf': return 'Word to PDF';
             case 'pdf-to-jpg': return 'PDF to JPG';
+            case 'pdf-to-word': return 'PDF to Word';
             case 'pdf-to-excel': return 'PDF to Excel';
             case 'excel-to-pdf': return 'Excel to PDF';
             default: return 'Converter';
@@ -123,6 +153,7 @@ const PdfConverter = ({ mode, onClose }) => {
         switch (mode) {
             case 'word-to-pdf': return ".docx";
             case 'pdf-to-jpg': return "application/pdf";
+            case 'pdf-to-word': return "application/pdf";
             case 'pdf-to-excel': return "application/pdf";
             case 'excel-to-pdf': return ".xlsx, .xls";
             default: return "*";
@@ -130,7 +161,7 @@ const PdfConverter = ({ mode, onClose }) => {
     };
 
     const getIcon = () => {
-        if (mode === 'pdf-to-excel' || mode === 'excel-to-pdf') return <Table size={40} />;
+        if (mode === 'pdf-to-word') return <FileText size={40} />;
         if (mode === 'pdf-to-jpg') return <Image size={40} />;
         return <FileText size={40} />;
     };
@@ -188,7 +219,11 @@ const PdfConverter = ({ mode, onClose }) => {
                     defaultFilename={mode}
                     onDownload={(name) => {
                         if (resultBlob) {
-                            const extension = mode.endsWith('pdf') ? 'pdf' : (mode.endsWith('jpg') ? 'jpg' : 'xlsx');
+                            let extension = 'pdf';
+                            if (mode === 'pdf-to-jpg') extension = 'jpg';
+                            else if (mode === 'pdf-to-word') extension = 'doc';
+                            else if (mode === 'pdf-to-excel') extension = 'xlsx';
+                            
                             saveFile(resultBlob, name, extension);
                         }
                     }}

@@ -12,10 +12,10 @@ const ContactUs = () => {
         setStatus('sending');
 
         emailjs.sendForm(
-            'service_rvya9wf',
-            'template_hd0k50a',
+            'service_ywilcxq',
+            'template_yi5bbrr',
             form.current,
-            'x_kRbuPOEGreRuBaS'
+            'C9zRiNWAGBzI2tFpv'
         ).then(
             () => {
                 setStatus('success');

@@ -16,8 +16,8 @@ const tools = [
     { name: 'Compress PDF', icon: Download, desc: 'Reduce file size' },
     { name: 'PDF to JPG', icon: Image, desc: 'Convert PDF to Images' },
     { name: 'Protect PDF', icon: Cloud, desc: 'Add password encryption' },
-    { name: 'PDF to Excel', icon: Table, desc: 'Convert PDF to Excel' },
-    { name: 'Excel to PDF', icon: Table, desc: 'Convert Excel to PDF' },
+    { name: 'PDF to Word', icon: FileText, desc: 'Convert PDF to Word' },
+    { name: 'Unlock PDF', icon: Eye, desc: 'Remove password' },
 ];
 
 const PdfStudio = () => {
@@ -31,8 +31,8 @@ const PdfStudio = () => {
         else if (toolName === 'Word to PDF') setActiveTool('word-to-pdf');
         else if (toolName === 'PDF to JPG') setActiveTool('pdf-to-jpg');
         else if (toolName === 'Protect PDF') setActiveTool('protect-pdf');
-        else if (toolName === 'PDF to Excel') setActiveTool('pdf-to-excel');
-        else if (toolName === 'Excel to PDF') setActiveTool('excel-to-pdf');
+        else if (toolName === 'PDF to Word') setActiveTool('pdf-to-word');
+        else if (toolName === 'Unlock PDF') setActiveTool('unlock-pdf');
         else alert('This tool is under development!');
     };
     return (
@@ -82,8 +82,10 @@ const PdfStudio = () => {
             {activeTool === 'compress-pdf' && <PdfCompress onClose={() => setActiveTool(null)} />}
             {activeTool === 'word-to-pdf' && <PdfConverter mode="word-to-pdf" onClose={() => setActiveTool(null)} />}
             {activeTool === 'pdf-to-jpg' && <PdfConverter mode="pdf-to-jpg" onClose={() => setActiveTool(null)} />}
+            {activeTool === 'pdf-to-word' && <PdfConverter mode="pdf-to-word" onClose={() => setActiveTool(null)} />}
             {activeTool === 'pdf-to-excel' && <PdfConverter mode="pdf-to-excel" onClose={() => setActiveTool(null)} />}
             {activeTool === 'excel-to-pdf' && <PdfConverter mode="excel-to-pdf" onClose={() => setActiveTool(null)} />}
+            {activeTool === 'unlock-pdf' && <PdfSecurity mode="unlock" onClose={() => setActiveTool(null)} />}
             {activeTool === 'protect-pdf' && <PdfSecurity mode="protect" onClose={() => setActiveTool(null)} />}
         </div>
     );
