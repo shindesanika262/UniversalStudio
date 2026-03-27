@@ -1,0 +1,6 @@
+User-agent: *
+Allow: /
+Allow: /login
+Disallow: /admin
+
+Sitemap: https://universalstudio-one.vercel.app/sitemap.xml

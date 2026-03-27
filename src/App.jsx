@@ -17,15 +17,14 @@ function App() {
             <div style={{ minHeight: '100vh', background: 'var(--bg-primary)', color: 'var(--text-primary)' }}>
                 <Navbar />
                 <Routes>
-                    <Route path="/" element={<ProtectedRoute><Home /></ProtectedRoute>} />
+                    <Route path="/" element={<Home />} />
                     <Route path="/pdf-studio" element={<ProtectedRoute><PdfStudio /></ProtectedRoute>} />
                     <Route path="/media-studio" element={<ProtectedRoute><MediaStudio /></ProtectedRoute>} />
                     <Route path="/enhancer" element={<ProtectedRoute><Enhancer /></ProtectedRoute>} />
                     <Route path="/contact" element={<ProtectedRoute><ContactUs /></ProtectedRoute>} />
                     <Route path="/login" element={<Login />} />
-
-
                 </Routes>
+
             </div>
         </Router>
     );
